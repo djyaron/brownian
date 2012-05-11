@@ -1,0 +1,9 @@
+**/*.asv
+*.asv
+*.mat
+data*
+*.fch
+tmp/*
+*.fig
+*.docx
+*.zip
