@@ -20,6 +20,7 @@ classdef TrajConfig
       ESeps      = 0.1     % threshold for overlap
       optWidth   = 0       % optimization parameter (no optimization if 0)
       optCutoff  = 0       % optimization parameter
+      wsize      = []
    end
    methods (Static)
       function res = GSonly(nangles, Vgs)

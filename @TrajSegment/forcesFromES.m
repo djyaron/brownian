@@ -1,5 +1,6 @@
-function [forces,E,c,wf,flag] = forcesFromES(beta,angles,b,periodic,ESeps, ...
+function [forces,E,c,wf,flag] = forcesFromESwind(beta,angles,b,periodic,ESeps, ...
    cen,width,cutoff)
+% Window version of the ES calculation
 % INPUT: beta = coupling between adjacent rings when planar (should be <0)
 %       angles = list of all angles of the rings
 %       b = wavefunction of charge from previous time step
@@ -47,7 +48,7 @@ for i=1:nangles-1
    hamil(i+1,i) = hamil(i,i+1);
 end
 if (periodic)
-   hamil(1,nangles) = beta*cos(angles(i+1)-angles(i));
+   hamil(1,nangles) = beta*cos(angles(nangles)-angles(1));
    hamil(nangles,1) = hamil(1,nangles);
 end
 

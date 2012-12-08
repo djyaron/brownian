@@ -66,6 +66,7 @@ classdef TrajSegment < dynamicprops
    methods (Static)
       [forcesGS, E] = forcesFromGS(V,angles,periodic)
       [forces,E,c,wf,flag] = forcesFromES(beta,angles,b,cen,width,cutoff)
+      [forces,E,c,wf,flag] = forcesFromESwind(beta,angles,cen,wsize)   
    end
    methods (Access = private)
       res = runTrajDebug(obj,nsteps)
@@ -250,15 +251,27 @@ classdef TrajSegment < dynamicprops
                % calculate energies and wf at this time step
                [~, Egs] = TrajSegment.forcesFromGS(obj.C.Vgs,obj.lastAngles);
                if (abs(obj.C.betaES) > 0)
-                  [~,Eexc,c,wf1] = TrajSegment.forcesFromES(obj.C.betaES, ...
-                     obj.lastAngles,[]);
+                  if (~isempty(obj.C.wsize))
+                     [~,Eexc,c,wf1] = ...
+                        TrajSegment.forcesFromESwind(obj.C.betaES, ...
+                        obj.lastAngles, obj.nangles/2,round((obj.nangles-5)/2));
+                  else
+                     [~,Eexc,c,wf1] = TrajSegment.forcesFromES(obj.C.betaES, ...
+                        obj.lastAngles,[]);
+                  end
                   if (obj.C.periodic)
                      nangles = obj.nangles;
                      sinAngles = sin( 2 * pi/nangles * (1:nangles) );
                      cosAngles = cos( 2 * pi/nangles * (1:nangles) );
                      sinAvg = sum(c.^2 .* sinAngles');
                      cosAvg = sum(c.^2 .* cosAngles');
-                     cent1 = atan2(sinAvg,cosAvg);
+                     cent1 = atan2(sinAvg,cosAvg)*nangles/(2*pi);
+                     if (cent1 < 1)
+                        cent1 = cent1 + nangles;
+                     end
+                     if (cent1 > nangles)
+                        cent1 = cent1 - nangles;
+                     end
                   else
                      cent1 = sum(c.^2 .* (1:obj.nangles)');
                   end

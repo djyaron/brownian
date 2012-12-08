@@ -7,6 +7,10 @@ tstep      = obj.C.tstep;
 beta1      = obj.C.beta1;
 I          = obj.C.I;
 periodic   = obj.C.periodic;
+% Force periodic for window simulations
+if (~isempty(obj.C.wsize))
+   periodic = true;
+end
 gamma = beta1 * tstep;
 kT = 1.3806504*10^(-23) * obj.C.temp;
 
@@ -27,9 +31,10 @@ muBr = 0;
 muBv = 0;
 
 % periodic  1..N  goes from 2Pi  angle = 2*Pi/N * (1:N)
+Rsave = 2 * pi/nangles;
 if (periodic)
-   sinAngles = sin( 2 * pi/nangles * (1:nangles) );
-   cosAngles = cos( 2 * pi/nangles * (1:nangles) );
+   sinAngles = sin( Rsave * (1:nangles) );
+   cosAngles = cos( Rsave * (1:nangles) );
 end
 
 angles = obj.lastAngles;
@@ -41,13 +46,15 @@ if (obj.C.betaES ~= 0)
    if (periodic)
       sinAvg = sum(wf.^2 .* sinAngles');
       cosAvg = sum(wf.^2 .* cosAngles');
-      cent = atan2(sinAvg,cosAvg);
+      cent = atan2(sinAvg,cosAvg)/Rsave;
    else
       cent = sum(wf.^2 .* (1:obj.nangles)');
+      % so an error with throw if doing window simulation without periodic
    end
 else
    wf = [];
    cent = 0.0;
+   % will invoke error if doing window without excited state on
 end
 for istep = (obj.timeSteps+1):totalSteps
    % Eq. A5 from Allen, Molecular Physics vol. 40, 1073-1087 (1980).
@@ -80,28 +87,40 @@ for istep = (obj.timeSteps+1):totalSteps
       periodic);
    
    if (obj.C.betaES ~= 0) % need to do ES calc
-      if (obj.C.ESoverlap == false) % set wf to [] to avoid overlap calc
-         wf = [];
-      end
-      if (obj.C.optWidth > 0)
+      if (~isempty(obj.C.wsize))
          [forcesES,Eexc,wf,ESwf,flag] = ...
-            TrajSegment.forcesFromES(obj.C.betaES, nextAngles, wf, ...
-            periodic, obj.C.ESeps, cent,obj.C.optWidth,obj.C.optCutoff);
-         if (flag)
-            res = res + 1;
-         end
+               TrajSegment.forcesFromESwind(obj.C.betaES, nextAngles,...
+               cent,obj.C.wsize);
       else
-         [forcesES,Eexc,wf,ESwf,flag] = ...
-            TrajSegment.forcesFromES(obj.C.betaES, nextAngles, wf,...
-            periodic, obj.C.ESeps);
-        if (flag)
-            res = res + 1;
-        end
+         if (obj.C.ESoverlap == false) % set wf to [] to avoid overlap calc
+            wf = [];
+         end
+         if (obj.C.optWidth > 0)
+            [forcesES,Eexc,wf,ESwf,flag] = ...
+               TrajSegment.forcesFromES(obj.C.betaES, nextAngles, wf, ...
+               periodic, obj.C.ESeps, cent,obj.C.optWidth,obj.C.optCutoff);
+            if (flag)
+               res = res + 1;
+            end
+         else
+            [forcesES,Eexc,wf,ESwf,flag] = ...
+               TrajSegment.forcesFromES(obj.C.betaES, nextAngles, wf,...
+               periodic, obj.C.ESeps);
+            if (flag)
+               res = res + 1;
+            end
+         end
       end
       if (periodic)
          sinAvg = sum(wf.^2 .* sinAngles');
          cosAvg = sum(wf.^2 .* cosAngles');
-         cent = atan2(sinAvg,cosAvg);
+         cent = atan2(sinAvg,cosAvg)/Rsave;
+         if (cent < 1)
+            cent = cent + obj.nangles;
+         end
+         if (cent > obj.nangles)
+            cent = cent - obj.nangles;
+         end
       else
          cent = sum(wf.^2 .* (1:obj.nangles)');
       end
