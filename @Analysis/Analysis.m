@@ -17,8 +17,8 @@ classdef Analysis
          % apply periodic conditions
          res = cumsum(d1);
       end
-      function [mu, t] = muFromC(t1,sumLengths)
-         x = Analysis.removePeriodic(t1.cent(1,:),t1.nangles);
+      function [mu, t] = muFromC(t1,sumLengths,ignore)
+         x = Analysis.removePeriodic(t1.cent(1,ignore:end),t1.nangles);
          mu = zeros(size(sumLengths));
          t = zeros(size(sumLengths));
          ic = 1;
