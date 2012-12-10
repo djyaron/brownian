@@ -31,7 +31,7 @@ classdef Library < dynamicprops
          failed = false;
          while (~failed)
             ifile = ifile + 1;
-            fileprefix = [obj.dataPath,'\',obj.filePrefix,'_',int2str(ifile)];
+            fileprefix = [obj.dataPath,filesep,obj.filePrefix,'_',int2str(ifile)];
             cfgfilename = [fileprefix,'_cfg.mat'];
             try % try to open the file
                load(cfgfilename,'Cfile');
@@ -48,14 +48,14 @@ classdef Library < dynamicprops
             obj.setNfile();
          end
          obj.nfile = obj.nfile + 1;
-         fileprefix = [obj.dataPath,'\',obj.filePrefix,'_',int2str(obj.nfile)];
+         fileprefix = [obj.dataPath,filesep,obj.filePrefix,'_',int2str(obj.nfile)];
          Cfile = Cin;
          save([fileprefix,'_cfg.mat'],  'Cfile' );
          save([fileprefix,'_calc.mat'], 'resFile' );
          res = obj.nfile;
       end
       function resFile = retrieve(obj, ifile)
-         fileprefix = [obj.dataPath,'\',obj.filePrefix,'_',int2str(ifile)];
+         fileprefix = [obj.dataPath,filesep,obj.filePrefix,'_',int2str(ifile)];
          load([fileprefix,'_calc.mat'], 'resFile' );
       end
       function res = find(obj, Ctarget, findAll)
@@ -70,7 +70,7 @@ classdef Library < dynamicprops
          failed = false;
          while (~finished)
             ifile = ifile + 1;
-            fileprefix = [obj.dataPath,'\',obj.filePrefix,'_',int2str(ifile)];
+            fileprefix = [obj.dataPath,filesep,obj.filePrefix,'_',int2str(ifile)];
             %disp(['looking for ',fileprefix]);
             cfgfilename = [fileprefix,'_cfg.mat'];
             try % try to open the file

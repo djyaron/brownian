@@ -12,7 +12,7 @@ else
    % To speed things up, we'll read in all the Cfiles right at the start
    Cfiles = cell(nfiles,1);
    for ifile = 1:nfiles
-      fileprefix = [obj.dataPath,'\',obj.filePrefix,'_',int2str(ifile)];
+      fileprefix = [obj.dataPath,filesep,obj.filePrefix,'_',int2str(ifile)];
       load([fileprefix,'_cfg.mat'], 'Cfile');
       Cfiles{ifile} = Cfile;
    end
