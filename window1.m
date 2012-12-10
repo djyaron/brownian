@@ -94,28 +94,28 @@ end
 end
 
 %%
-i = 1;
-nplot = 1000;
-x = Analysis.removePeriodic(t1.cent(1,:),t1.nangles);
-while 1
-   plot(x(i:(i+nplot)),'r.');
-   i = i+nplot;
-   input junk;
-end
-%%  Plots of a trajectory (assuming nener = nwf = 2)
-time1 = t1.time('ener','fs');
-figure(100)
-clf;
-plot(time1,t1.ener(1,:),'k.');
-hold on;
-plot(time1,t1.ener(2,:),'r.');
-figure(200)
-plot(time1,t1.cent(1,:),'b.');
-title('center');
-figure(205)
-plot(time1,t1.cent(2,:),'g.');
-title('wf width');
-disp(['average wf width = ',num2str(mean(t1.cent(2,:)))]);
+% i = 1;
+% nplot = 1000;
+% x = Analysis.removePeriodic(t1.cent(1,:),t1.nangles);
+% while 1
+%    plot(x(i:(i+nplot)),'r.');
+%    i = i+nplot;
+%    input junk;
+% end
+% %%  Plots of a trajectory (assuming nener = nwf = 2)
+% time1 = t1.time('ener','fs');
+% figure(100)
+% clf;
+% plot(time1,t1.ener(1,:),'k.');
+% hold on;
+% plot(time1,t1.ener(2,:),'r.');
+% figure(200)
+% plot(time1,t1.cent(1,:),'b.');
+% title('center');
+% figure(205)
+% plot(time1,t1.cent(2,:),'g.');
+% title('wf width');
+% disp(['average wf width = ',num2str(mean(t1.cent(2,:)))]);
 % for i = 1:size(t1.wf,3)
 %    figure(300)
 %    plot(t1.wf(:,1,i));

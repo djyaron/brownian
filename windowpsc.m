@@ -2,7 +2,7 @@ function windowpsc
 
 % First attempt at the window approach to mobility 
 %clear classes;
-dataroot = '/brashear/yaron/matdl/browniantest';
+dataroot = '/brashear/yaron/matdl/brownian';
 % Create default library structure for window mobility calcs
 
 % Variables to be looped over
@@ -11,7 +11,7 @@ Vgs = 0.3; %[0.3 1];
 betaES = [-10];
 beta1 = [1];
 tstep = [1 0.2];% [1 10 0.2 0.05];
-nsteps = [50 100]; %[1e6 5e6]; %[200000 20000 600000 1000000];
+nsteps = [1e6 5e6]; %[200000 20000 600000 1000000];
 wsize = 3:20; %[3 4 5 6 7 8 9 10 11 12 15 20];
 nruns = 15;
 
