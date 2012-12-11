@@ -5,8 +5,8 @@ dataroot = 'c:\matdl\brownian';
 
 % Variables to be looped over
 nangles = 100; % [50 100];
-Vgs = 1; %[0.3 1];
-betaES = [-20];
+Vgs = 0; %[0.3 1];
+betaES = [-30];
 beta1 = [1];
 tstep = 1;% [1 10 0.2 0.05];
 nsteps = 1e6; %[200000 20000 600000 1000000];
@@ -173,9 +173,11 @@ egapy = zeros(length(wsize),nhistBins);
 ic = 0;
 gaps = [];
 wfwidth = [];
+trajs = cell(0,0);
 for ifile = ifound(:)'
    ic = ic+1;
    t1 = lib.retrieve(ifile);
+   trajs{end+1} = t1;
    gaps = [gaps, t1.ener(3,ignore:end) - t1.ener(2,ignore:end)];
    wfwidth = [wfwidth,t1.cent(2,ignore:end)];
    [mu(ifile,:), t] = Analysis.muFromC(t1,sumLengths,ignore);
@@ -184,6 +186,14 @@ for ifile = ifound(:)'
    t = t * 48.8/1000;
    plot(t,mu(ifile,:),'r.')
 end
+% Plot distribution of jumps
+[xdel, ydel] = Analysis.jumpDistribution(trajs,50000,5000);
+figure(499)
+hold on;
+plot(xdel, ydel+Clib.wsize,'r-');
+title('jump distribution');
+grid on
+grid(gca,'minor');
 % Plot gap between E1 and E2
 [egapy(i6,:),egapx(i6,:)] = hist(gaps,nhistBins);
 egapy(i6,:) = egapy(i6,:)/max(egapy(i6,:));

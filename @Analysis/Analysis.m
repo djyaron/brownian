@@ -32,6 +32,17 @@ classdef Analysis
             ic = ic+1;
          end
       end
+      function [xp,yp] = jumpDistribution(trajs,sumlength,ignore)
+         jumps = [];
+         for i = 1:length(trajs)
+            t1 = trajs{i};
+            x = Analysis.removePeriodic(t1.cent(1,ignore:end),t1.nangles);
+            d1 = Analysis.takeDiff(x,sumlength);
+            jumps = [jumps,d1(:)'];
+         end
+         [yp,xp] = hist(jumps,50);
+         yp = yp/max(yp);
+      end
    end
 end
 
