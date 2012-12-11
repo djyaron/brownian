@@ -1,19 +1,20 @@
-function windowpsc
+%function windowpsc
 
 % First attempt at the window approach to mobility 
 %clear classes;
-dataroot = '/brashear/yaron/matdl/brownian';
+%dataroot = '/brashear/yaron/matdl/brownian';
+dataroot = 'C:\matdl\brownian';
 % Create default library structure for window mobility calcs
 
 % Variables to be looped over
 nangles = 100; % [50 100];
-Vgs = 0.3; %[0.3 1];
-betaES = [-10];
+Vgs = 0; %[0.3 1];
+betaES = [-30];
 beta1 = [1];
-tstep = [1 0.2];% [1 10 0.2 0.05];
-nsteps = [1e6 5e6]; %[200000 20000 600000 1000000];
+tstep = [1];% [1 10 0.2 0.05];
+nsteps = [1e6]; %[200000 20000 600000 1000000];
 wsize = 3:20; %[3 4 5 6 7 8 9 10 11 12 15 20];
-nruns = 15;
+nruns = 7;
 
 nsave = [0 1000 10 0 10];
 nener = 3; % save ground state and first two excited states
@@ -101,8 +102,8 @@ C.wsize            = Clib.wsize;
 %          ' found ', num2str(nfound) ...
 %          ]);
 
-lib = Library([dataroot,'/gs',num2str(Clib.Vgs),...
-   '/es',num2str(abs(Clib.betaES)),'/w',num2str(Clib.wsize)] ...
+lib = Library([dataroot,'\gs',num2str(Clib.Vgs),...
+   '\es',num2str(abs(Clib.betaES)),'\w',num2str(Clib.wsize)] ...
    ,'wind');
 nfound = 0;
    for irun = (nfound+1):nruns
@@ -115,4 +116,4 @@ nfound = 0;
 end
 
 
-end
+%end

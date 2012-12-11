@@ -6,6 +6,7 @@ dataroot = 't:\matdl\brownian';
 
 % Variables to be looped over
 nangles = 100; % [50 100];
+
 Vgs = 1; % 1; %[0.3 1];
 betaES = [-20];
 beta1 = [1];
@@ -176,9 +177,11 @@ egapy = zeros(length(wsize),nhistBins);
 ic = 0;
 gaps = [];
 wfwidth = [];
+trajs = cell(0,0);
 for ifile = ifound(:)'
    ic = ic+1;
    t1 = lib.retrieve(ifile);
+   trajs{end+1} = t1;
    gaps = [gaps, t1.ener(3,ignore:end) - t1.ener(2,ignore:end)];
    wfwidth = [wfwidth,t1.cent(2,ignore:end)];
    [mu(ifile,:), t] = Analysis.muFromC(t1,sumLengths,ignore);
@@ -187,6 +190,14 @@ for ifile = ifound(:)'
    t = t * 48.8/1000;
    plot(t,mu(ifile,:),'r.')
 end
+% Plot distribution of jumps
+[xdel, ydel] = Analysis.jumpDistribution(trajs,50000,5000);
+figure(499)
+hold on;
+plot(xdel, ydel+Clib.wsize,'r-');
+title('jump distribution');
+grid on
+grid(gca,'minor');
 % Plot gap between E1 and E2
 [egapy(i6,:),egapx(i6,:)] = hist(gaps,nhistBins);
 egapy(i6,:) = egapy(i6,:)/max(egapy(i6,:));
@@ -223,4 +234,85 @@ end
 end
 end
 
+%%
+% Test trajectory, to make sure we know what we are doing.
+trs = cell(0,0);
+for nangles = [50 100]
+   for stepSize = [2.0 4.0]
+%nangles = 100;
+%stepSize = 2.0; % gaussian random steps of this magnitude each time step
+nstep = 1e6;
 
+tr.nangles = nangles;
+tr.C.tstep = 1;
+tr.t = 1:nstep;
+c = zeros(1,nstep);
+rnum = stepSize * randn(nstep,1);
+
+c(1) = 0;
+for i = 1:(nstep-1)
+   c(i+1) = c(i) + rnum(i);
+   if (c(i+1) > nangles)
+      c(i+1) = c(i+1) - nangles;
+   end
+   if (c(i+1) < 0)
+      c(i+1) = c(i+1) + nangles;
+   end
+end
+tr.cent = c;
+trs{end+1} = tr;
+   end
+end
+%%
+for it = 1:length(trs)
+sumlengths = 1:100;
+ignore = 200;
+[mu, t] = Analysis.muFromC(trs{it},sumLengths,ignore);
+figure(55)
+hold on;
+plot(t,mu);
+end
+
+%% What is the depenence if we just move randomly within the window
+% Test trajectory, to make sure we know what we are doing.
+trs = cell(0,0);
+winds = [];
+for wind = 3:50
+%nangles = 100;
+%stepSize = 2.0; % gaussian random steps of this magnitude each time step
+nstep = 1e6;
+winds(end+1) = wind;
+
+tr.nangles = nangles;
+tr.C.tstep = 1;
+tr.t = 1:nstep;
+c = zeros(1,nstep);
+rnum = wind * (-1 + 2 * rand(nstep,1));
+
+c(1) = 0;
+for i = 1:(nstep-1)
+   c(i+1) = c(i) + rnum(i);
+   if (c(i+1) > nangles)
+      c(i+1) = c(i+1) - nangles;
+   end
+   if (c(i+1) < 0)
+      c(i+1) = c(i+1) + nangles;
+   end
+end
+tr.cent = c;
+trs{end+1} = tr;
+
+end
+%%
+muWind = [];
+for it = 1:length(trs)
+sumlengths = 1:100;
+ignore = 200;
+[mu, t] = Analysis.muFromC(trs{it},sumLengths,ignore);
+figure(55)
+hold on;
+plot(t,mu);
+muWind(end+1) = mu(end);
+end
+figure(56)
+plot(winds,muWind);
