@@ -1,11 +1,12 @@
 %% First attempt at the window approach to mobility 
 clear classes;
-dataroot = 'c:\matdl\brownian';
+%dataroot = 'c:\matdl\brownian';
+dataroot = 't:\matdl\brownian';
 % Create default library structure for window mobility calcs
 
 % Variables to be looped over
 nangles = 100; % [50 100];
-Vgs = 1; %[0.3 1];
+Vgs = 1; % 1; %[0.3 1];
 betaES = [-20];
 beta1 = [1];
 tstep = 1;% [1 10 0.2 0.05];
@@ -37,7 +38,8 @@ Clib.tstep         = tstep(i5);
 Clib.temp          = 298;
 Clib.wsize         = wsize(i6);
 
-lib = Library([dataroot,'\c',num2str(Clib.nangles),'\w',num2str(Clib.wsize)] ...
+lib = Library([dataroot,'\gs',num2str(Clib.Vgs),...
+   '\es',num2str(abs(Clib.betaES)),'\w',num2str(Clib.wsize)] ...
    ,'wind');
 
 % Copy the configuration variables into the structure used to configure the
@@ -149,7 +151,8 @@ Clib.tstep         = tstep(i5);
 Clib.temp          = 298;
 Clib.wsize         = wsize(i6);
 
-lib = Library([dataroot,'\c',num2str(Clib.nangles),'\w',num2str(Clib.wsize)] ...
+lib = Library([dataroot,'\gs',num2str(Clib.Vgs),...
+   '\es',num2str(abs(Clib.betaES)),'\w',num2str(Clib.wsize)] ...
    ,'wind');
 
 ifound = lib.find(Clib);
