@@ -8,16 +8,25 @@ classdef Analysis
          res = x((ndiff+1):end) - x(1:(end-ndiff));
       end
       function res = removePeriodic(x,nangles)
-         % take differences
+         % takes a list of centers, in terms of unit cell numbers
+         % that lie between 0 and nangles, and returns a list of 
+         % real displacements
+         % 1) calculate raw differences
          d1 = Analysis.takeDiff(x,1);
+         % 2) for differences <-nangles or >nangles, 
+         %    set correct difference
          i1 = find(abs(d1+nangles) < abs(d1));
          d1(i1) = d1(i1) + nangles;
          i1 = find(abs(d1-nangles) < abs(d1));
          d1(i1) = d1(i1) - nangles;
-         % apply periodic conditions
+         % 3) reconstruct trajectory from differences 
          res = cumsum(d1);
       end
       function [mu, t] = muFromC(t1,sumLengths,ignore)
+         % calculates mobility from a trajSegment t1
+         % it ignores the first "ignore" time steps
+         % sumLengths is a list of times, used to get the 
+         % rms(x2) where x2 = (x(t+sumLength)-x(t)).
          x = Analysis.removePeriodic(t1.cent(1,ignore:end),t1.nangles);
          mu = zeros(size(sumLengths));
          t = zeros(size(sumLengths));
@@ -33,5 +42,7 @@ classdef Analysis
          end
       end
    end
+   
+   
 end
 
