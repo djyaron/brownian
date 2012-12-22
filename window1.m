@@ -7,8 +7,8 @@ dataroot = 'c:\matdl\brownian';
 % Variables to be looped over
 nangles = 100; % [50 100];
 
-Vgs =1; % 1; %[0.3 1];
-betaES = [-20];
+Vgs = [0.1 0.3]; % 1; %[0.3 1];
+betaES = [-50 -60 -70];
 beta1 = [1];
 tstep = 1;% [1 10 0.2 0.05];
 nsteps = 1e6; %[200000 20000 600000 1000000];
@@ -303,7 +303,7 @@ tr.cent = c;
 trs{end+1} = tr;
 
 end
-%%
+
 muWind = [];
 for it = 1:length(trs)
 sumlengths = 1:100;
