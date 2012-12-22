@@ -7,13 +7,13 @@ dataroot = 't:\matdl\brownian';
 % Variables to be looped over
 nangles = 100; % [50 100];
 
-Vgs = 1; % 1; %[0.3 1];
-betaES = [-20];
+Vgs = 0.3; % 1; %[0.3 1];
+betaES = [-50 -70];
 beta1 = [1];
 tstep = 1;% [1 10 0.2 0.05];
 nsteps = 1e6; %[200000 20000 600000 1000000];
 wsize = 3:20; %[3 4 5 6 7 8 9 10 11 12 15 20];
-nruns = 15;
+nruns = 10;
 
 nsave = [0 1000 10 0 10];
 nener = 3; % save ground state and first two excited states
@@ -303,7 +303,7 @@ tr.cent = c;
 trs{end+1} = tr;
 
 end
-%%
+
 muWind = [];
 for it = 1:length(trs)
 sumlengths = 1:100;
