@@ -33,7 +33,7 @@ classdef Analysis
          ic = 1;
          for iwind = sumLengths
             d1 = Analysis.takeDiff(x,iwind);
-            time1 = t1.C.tstep * iwind;
+            time1 = t1.C.tstep *t1.nsave(5) * iwind;
             avgx2 = mean(d1.^2);         
             mu(ic) = (1.6e-19 * (4e-8).^2 /2/1.38e-23/298/48.8e-15) ...
                * avgx2/time1;
