@@ -1,21 +1,22 @@
 %% First attempt at the window approach to mobility 
 clear classes;
-dataroot = 'c:\matdl\brownian';
-%dataroot = 't:\matdl\brownian';
+dataroot = 'c:\matdl\brownian\step05';
+%dataroot = 't:\matdl\brownian\smallstep';
 % Create default library structure for window mobility calcs
 
 % Variables to be looped over
 nangles = 100; % [50 100];
 
-Vgs = [0.1 0.3]; % 1; %[0.3 1];
-betaES = [-50 -60 -70];
+Vgs = [0.0]; % 1; %[0.3 1];
+betaES = [-70];
 beta1 = [1];
-tstep = 1;% [1 10 0.2 0.05];
-nsteps = 1e6; %[200000 20000 600000 1000000];
+tstep = 1 / 2;% [1 10 0.2 0.05];
+%nsteps = 1e6; %[200000 20000 600000 1000000];
+nsteps = 1e6 *2;
 wsize = 3:20; %[3 4 5 6 7 8 9 10 11 12 15 20];
 nruns = 7;
 
-nsave = [0 1000 10 0 10];
+nsave = [0 1000 10 0 10]*2;
 nener = 3; % save ground state and first two excited states
 nwf = 0;
 
