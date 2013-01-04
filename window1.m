@@ -7,12 +7,12 @@ dataroot = 'c:\matdl\brownian';
 % Variables to be looped over
 nangles = 100; % [50 100];
 
-Vgs = [0.1 0.3]; % 1; %[0.3 1];
-betaES = [-50 -60 -70];
-beta1 = [1];
-tstep = 1;% [1 10 0.2 0.05];
-nsteps = 1e6; %[200000 20000 600000 1000000];
-wsize = 3:20; %[3 4 5 6 7 8 9 10 11 12 15 20];
+Vgs = [0.0]; % 1; %[0.3 1];
+betaES = [-70];
+beta1 = [10 20 40 50];
+tstep = 0.5; %[1 2 5 0.2 0.5];
+nsteps = 2e6; %[1e6 5e5 2e5 5e6 2e6]; %[200000 20000 600000 1000000];
+wsize = [3:20 25 30 40]; %[3 4 5 6 7 8 9 10 11 12 15 20];
 nruns = 7;
 
 nsave = [0 1000 10 0 10];
@@ -35,7 +35,7 @@ Clib.nangles       = nangles(i1);
 Clib.Vgs           = Vgs(i2);
 Clib.betaES        = betaES(i3);
 Clib.beta1         = beta1(i4);
-Clib.tstep         = tstep(i5);
+Clib.tstep         = tstep(i5) * Clib.beta1;
 Clib.temp          = 298;
 Clib.wsize         = wsize(i6);
 
@@ -81,7 +81,8 @@ else
          ' found ', num2str(nfound) ...
          ]);
    for irun = (nfound+1):nruns
-      t1 = TrajSegment(C,nsave,nener,nwf);
+      nsave1 = nsave/tstep(i5);
+      t1 = TrajSegment(C,nsave1,nener,nwf);
       tic;
       olaps = t1.runTraj( nsteps(i5) );
       toc;
@@ -130,6 +131,8 @@ end
 
 %% load data
 
+linec = {'k','g','y','r','b'};
+tlegend = {'t=1', 't=2', 't=5','t=0.2','t=0.5'};
 for i1 = 1:length(nangles)
 for i2 = 1:length(Vgs)
 for i3 = 1:length(betaES)
@@ -148,7 +151,7 @@ Clib.nangles       = nangles(i1);
 Clib.Vgs           = Vgs(i2);
 Clib.betaES        = betaES(i3);
 Clib.beta1         = beta1(i4);
-Clib.tstep         = tstep(i5);
+Clib.tstep         =  tstep(i5) * Clib.beta1;
 Clib.temp          = 298;
 Clib.wsize         = wsize(i6);
 
@@ -184,11 +187,11 @@ for ifile = ifound(:)'
    trajs{end+1} = t1;
    gaps = [gaps, t1.ener(3,ignore:end) - t1.ener(2,ignore:end)];
    wfwidth = [wfwidth,t1.cent(2,ignore:end)];
-   [mu(ifile,:), t] = Analysis.muFromC(t1,sumLengths,ignore);
+   [mu(ic,:), t] = Analysis.muFromC(t1,sumLengths,ignore);
    figure(100);
    hold on;
    t = t * 48.8/1000;
-   plot(t,mu(ifile,:),'r.')
+   plot(t,mu(ic,:),'r.')
 end
 % Plot distribution of jumps
 [xdel, ydel] = Analysis.jumpDistribution(trajs,50000,5000);
@@ -227,12 +230,15 @@ ylabel('mobility');
 
 end
 figure(300);
-errorbar(xw,yw,sdw);
+hold on;
+errorbar(xw,yw,sdw,linec{i5});
 end
 end
 end
 end
 end
+figure(300);
+legend(tlegend);
 
 %%
 % Test trajectory, to make sure we know what we are doing.
