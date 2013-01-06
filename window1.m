@@ -36,7 +36,7 @@ Clib.nangles       = nangles(i1);
 Clib.Vgs           = Vgs(i2);
 Clib.betaES        = betaES(i3);
 Clib.beta1         = beta1(i4);
-Clib.tstep         = tstep(i5);
+Clib.tstep         = tstep(i5) * Clib.beta1;
 Clib.temp          = 298;
 Clib.wsize         = wsize(i6);
 
@@ -82,7 +82,8 @@ else
          ' found ', num2str(nfound) ...
          ]);
    for irun = (nfound+1):nruns
-      t1 = TrajSegment(C,nsave,nener,nwf);
+      nsave1 = nsave/tstep(i5);
+      t1 = TrajSegment(C,nsave1,nener,nwf);
       tic;
       olaps = t1.runTraj( nsteps(i5) );
       toc;
@@ -131,6 +132,8 @@ end
 
 %% Detailed plot
 
+linec = {'k','g','y','r','b'};
+tlegend = {'t=1', 't=2', 't=5','t=0.2','t=0.5'};
 for i1 = 1:length(nangles)
 for i2 = 1:length(Vgs)
 for i3 = 1:length(betaES)
@@ -149,7 +152,7 @@ Clib.nangles       = nangles(i1);
 Clib.Vgs           = Vgs(i2);
 Clib.betaES        = betaES(i3);
 Clib.beta1         = beta1(i4);
-Clib.tstep         = tstep(i5);
+Clib.tstep         =  tstep(i5) * Clib.beta1;
 Clib.temp          = 298;
 Clib.wsize         = wsize(i6);
 
@@ -228,12 +231,15 @@ ylabel('mobility');
 
 end
 figure(300);
-errorbar(xw,yw,sdw);
+hold on;
+errorbar(xw,yw,sdw,linec{i5});
 end
 end
 end
 end
 end
+figure(300);
+legend(tlegend);
 
 %% Summary plot
 clear classes;
