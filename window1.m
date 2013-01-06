@@ -1,22 +1,22 @@
 %% First attempt at the window approach to mobility 
 clear classes;
-dataroot = 'c:\matdl\brownian\step05';
+dataroot = 'c:\matdl\brownian\';
 %dataroot = 't:\matdl\brownian\smallstep';
 % Create default library structure for window mobility calcs
 
 % Variables to be looped over
 nangles = 100; % [50 100];
 
-Vgs = [0.0]; % 1; %[0.3 1];
-betaES = [-70];
+Vgs = [0.0];% 0.1 0.3]; % 1; %[0.3 1];
+betaES = [-10 -20 -300];%[-30 -40 -50 -60 -70];
 beta1 = [1];
-tstep = 1 / 2;% [1 10 0.2 0.05];
+tstep = 1;% [1 10 0.2 0.05];
 %nsteps = 1e6; %[200000 20000 600000 1000000];
-nsteps = 1e6 *2;
-wsize = 3:20; %[3 4 5 6 7 8 9 10 11 12 15 20];
+nsteps = 1e6;
+wsize = [3:20 25 30 35 40]; %[3 4 5 6 7 8 9 10 11 12 15 20];
 nruns = 7;
 
-nsave = [0 1000 10 0 10]*2;
+nsave = [0 1000 10 0 10];
 nener = 3; % save ground state and first two excited states
 nwf = 0;
 
@@ -129,7 +129,7 @@ end
 % end
 
 
-%% load data
+%% Detailed plot
 
 for i1 = 1:length(nangles)
 for i2 = 1:length(Vgs)
@@ -185,11 +185,11 @@ for ifile = ifound(:)'
    trajs{end+1} = t1;
    gaps = [gaps, t1.ener(3,ignore:end) - t1.ener(2,ignore:end)];
    wfwidth = [wfwidth,t1.cent(2,ignore:end)];
-   [mu(ifile,:), t] = Analysis.muFromC(t1,sumLengths,ignore);
+   [mu(ic,:), t] = Analysis.muFromC(t1,sumLengths,ignore);
    figure(100);
    hold on;
    t = t * 48.8/1000;
-   plot(t,mu(ifile,:),'r.')
+   plot(t,mu(ic,:),'r.')
 end
 % Plot distribution of jumps
 [xdel, ydel] = Analysis.jumpDistribution(trajs,50000,5000);
@@ -234,6 +234,116 @@ end
 end
 end
 end
+
+%% Summary plot
+clear classes;
+dataroot = 'c:\matdl\brownian\';
+nangles = 100; % [50 100];
+Vgs = [0.0];% 0.1 0.3]; % 1; %[0.3 1];
+betaES = [-10 -20];%[-30:-10:-100 -200]%[-30 -40 -50 -60 -70];
+beta1 = [1];
+tstep = 1;% [1 10 0.2 0.05];
+%nsteps = 1e6; %[200000 20000 600000 1000000];
+nsteps = 1e6;
+wsize = [3:20 25 30 35 40]; %[3 4 5 6 7 8 9 10 11 12 15 20];
+
+
+resSave = cell(0,0);
+
+ilt = 0;
+ltxt = cell(0,0);
+%lt = {'ro','go','bo','ko','co','r^','g^','b^','k^','c^'};
+lt = {'r','g','b','k','c','r','g','b','k','c'};
+close all;
+for i1 = 1:length(nangles)
+for i2 = 1:length(Vgs)
+for i3 = 1:length(betaES)
+for i4 = 1:length(beta1)
+for i5 = 1:length(tstep)
+   xw = []; yw=[]; sdw=[];
+for i6 = 1:length(wsize)
+
+% Structure used to label the data for library storage/retreival  
+Clib = [];
+Clib.type = 'wind1';
+Clib.nangles       = nangles(i1);
+Clib.Vgs           = Vgs(i2);
+Clib.betaES        = betaES(i3);
+Clib.beta1         = beta1(i4);
+Clib.tstep         = tstep(i5);
+Clib.temp          = 298;
+Clib.wsize         = wsize(i6);
+
+lib = Library([dataroot,'\gs',num2str(Clib.Vgs),...
+   '\es',num2str(abs(Clib.betaES)),'\w',num2str(Clib.wsize)] ...
+   ,'wind');
+
+ifound = lib.find(Clib);
+disp(['angles ',num2str(Clib.nangles), ...
+   ' Vgs ', num2str(Clib.Vgs), ...
+   ' betaEs ', num2str(Clib.betaES), ...
+   ' beta1 ', num2str(Clib.beta1), ...
+   ' tstep ', num2str(Clib.tstep), ...
+   ' wsize ', num2str(Clib.wsize),...
+   ' found ',num2str(length(ifound)) ...
+   ]);
+
+%sumLengths = [1:1000:100000];
+sumLengths = [1:5:200];
+% mu(files, timewindow)
+mu = zeros(length(ifound),length(sumLengths));
+nhistBins = 400;
+ignore = 5000;
+egapx = zeros(length(wsize),nhistBins);
+egapy = zeros(length(wsize),nhistBins);
+ic = 0;
+gaps = [];
+wfwidth = [];
+trajs = cell(0,0);
+for ifile = ifound(:)'
+   ic = ic+1;
+   t1 = lib.retrieve(ifile);
+   trajs{end+1} = t1;
+   gaps = [gaps, t1.ener(3,ignore:end) - t1.ener(2,ignore:end)];
+   wfwidth = [wfwidth,t1.cent(2,ignore:end)];
+   [mu(ic,:), t] = Analysis.muFromC(t1,sumLengths,ignore);
+end
+
+avgMu = mean(mu);
+sdMu = std(mu)/sqrt(length(ifound));
+
+xw(end+1) = (2*Clib.wsize+1);
+yw(end+1) = avgMu(1,end);
+sdw(end+1) = sdMu(1,end);
+
+%figure(200);
+%hold on;
+%errorbar(t,avgMu,sdMu,'k')
+   
+%xlabel('time (ps)');
+%ylabel('mobility');
+
+end
+figure(300);
+hold on;
+ilt = ilt+1;
+errorbar(xw,yw,sdw,lt{ilt});
+temp1.w = xw;
+temp1.mob = yw;
+temp1.sd = sdw;
+temp1.Vgs = Clib.Vgs;
+temp1.betaES = Clib.betaES;
+resSave{end+1} = temp1; 
+ltxt{end+1} = num2str(Clib.betaES);
+end
+end
+end
+end
+end
+figure(300);
+xlabel('window size (unit cells)');
+ylabel('mobility');
+legend(ltxt);
 
 %%
 % Test trajectory, to make sure we know what we are doing.
