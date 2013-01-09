@@ -8,12 +8,12 @@ dataroot = 'c:\matdl\brownian\';
 nangles = 100; % [50 100];
 
 Vgs = [0.0];% 0.1 0.3]; % 1; %[0.3 1];
-betaES = [-10 -20 -300];%[-30 -40 -50 -60 -70];
+betaES = [-70:-10:-200];%[-30 -40 -50 -60 -70];
 beta1 = [1];
 tstep = 1;% [1 10 0.2 0.05];
 %nsteps = 1e6; %[200000 20000 600000 1000000];
 nsteps = 1e6;
-wsize = [3:20 25 30 35 40]; %[3 4 5 6 7 8 9 10 11 12 15 20];
+wsize = [10 20];%[20 25]; %[3 4 5 6 7 8 9 10 11 12 15 20];
 nruns = 7;
 
 nsave = [0 1000 10 0 10];
@@ -24,10 +24,10 @@ nwf = 0;
 
 for i1 = 1:length(nangles)
 for i2 = 1:length(Vgs)
-for i3 = 1:length(betaES)
 for i4 = 1:length(beta1)
 for i5 = 1:length(tstep)
-parfor i6 = 1:length(wsize)
+for i6 = 1:length(wsize)
+parfor i3 = 1:length(betaES)
 
 % Structure used to label the data for library storage/retreival   
 Clib = [];
@@ -245,8 +245,8 @@ legend(tlegend);
 clear classes;
 dataroot = 'c:\matdl\brownian\';
 nangles = 100; % [50 100];
-Vgs = [0.0];% 0.1 0.3]; % 1; %[0.3 1];
-betaES = [-10 -20];%[-30:-10:-100 -200]%[-30 -40 -50 -60 -70];
+Vgs = [0.3];% 0.1 0.3]; % 1; %[0.3 1];
+betaES = [-30 -40 -50 -60 -70];% [-200 -300];%[-30:-10:-100 -200]%
 beta1 = [1];
 tstep = 1;% [1 10 0.2 0.05];
 %nsteps = 1e6; %[200000 20000 600000 1000000];
@@ -350,6 +350,7 @@ figure(300);
 xlabel('window size (unit cells)');
 ylabel('mobility');
 legend(ltxt);
+title(['GS = ',num2str(Clib.Vgs)]);
 
 %%
 % Test trajectory, to make sure we know what we are doing.
