@@ -21,9 +21,9 @@ nwf = 0;
 nsteps = 1e6; 
 
 xtype = 'betaES';
-xvals = [-30:-10:-60]; %[-30 -40 -50 -60];
+xvals = [-70:-10:-200]; %[-30 -40 -50 -60];
 linetype = 'Vgs';
-lvals = [0.0 0.1 0.3];
+lvals = [0.0];% 0.1 0.3];
 
 
 %lt = {'ro','go','bo','ko','co','r^','g^','b^','k^','c^'};
@@ -32,7 +32,7 @@ legnd = cell(0,0);
 close all;
 
 for iline = 1:length(lvals)
-   xp = []; yp=[]; ypw=[];
+   xp = []; yp=[]; ypw=[]; y1 = []; y2=[];sd1=[]; sd2=[];
    Clib = setfield(Clib,linetype,lvals(iline));
    for ix = 1:length(xvals)
       xp(end+1) = xvals(ix);
@@ -67,15 +67,23 @@ for iline = 1:length(lvals)
          end
          
          ysave(iw) = mean(mu);
-         %sdMu = std(mu)/sqrt(length(ifound));
+         sdMu(iw) = std(mu)/sqrt(length(ifound));
       end
       yp(end+1) = mean(ysave);
       ypw(end+1) = (max(ysave)-min(ysave))/2;
+      y1(end+1) = ysave(1);
+      y2(end+1) = ysave(2);
+      sd1(end+1) = sdMu(1);
+      sd2(end+1) = sdMu(2);
    end
    figure(300);
    hold on;
    errorbar(xp,yp,ypw,lt{iline});
    legnd{end+1} = [linetype,' = ',num2str(lvals(iline))];
+   figure(400);
+   errorbar(xp,y1,sd1);
+   hold on;
+   errorbar(xp,y2,sd2);
 end
 figure(300);
 xlabel(xtype);
